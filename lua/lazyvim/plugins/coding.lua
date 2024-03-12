@@ -7,7 +7,7 @@ return {
     event = "InsertEnter",
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
+      -- "hrsh7th/cmp-buffer",
       "hrsh7th/cmp-path",
     },
     -- Not all LSP servers add brackets when completing a function.
@@ -20,22 +20,37 @@ return {
     -- }
     -- ```
     opts = function()
+      local has_words_before = function()
+        local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+        return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+      end
+
       vim.api.nvim_set_hl(0, "CmpGhostText", { link = "Comment", default = true })
       local cmp = require("cmp")
       local defaults = require("cmp.config.default")()
       local auto_select = true
+      local luasnip = require("luasnip")
       return {
         auto_brackets = {}, -- configure any filetype to auto add brackets
         completion = {
           completeopt = "menu,menuone,noinsert" .. (auto_select and "" or ",noselect"),
         },
         preselect = auto_select and cmp.PreselectMode.Item or cmp.PreselectMode.None,
+        snippet = {
+          expand = function(args)
+            luasnip.lsp_expand(args.body)
+          end,
+        },
         mapping = cmp.mapping.preset.insert({
+          ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+          ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
           ["<C-b>"] = cmp.mapping.scroll_docs(-4),
           ["<C-f>"] = cmp.mapping.scroll_docs(4),
           ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
           ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
           ["<C-Space>"] = cmp.mapping.complete(),
+          -- ['<ESC>'] = cmp.mapping.abort(),
+          ["<C-e>"] = cmp.mapping.abort(),
           ["<CR>"] = LazyVim.cmp.confirm({ select = auto_select }),
           ["<C-y>"] = LazyVim.cmp.confirm({ select = true }),
           ["<S-CR>"] = LazyVim.cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
@@ -43,12 +58,35 @@ return {
             cmp.abort()
             fallback()
           end,
+          ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_next_item()
+            elseif has_words_before() then
+              if luasnip.expand_or_jumpable() then
+                luasnip.expand_or_jump()
+              else
+                cmp.complete()
+              end
+            else
+              fallback()
+            end
+          end, { "i", "c" }),
+
+          ["<S-Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.select_prev_item()
+            elseif luasnip.jumpable(-1) then
+              luasnip.jump(-1)
+            else
+              fallback()
+            end
+          end, { "i", "c" }),
         }),
         sources = cmp.config.sources({
           { name = "nvim_lsp" },
           { name = "path" },
         }, {
-          { name = "buffer" },
+          -- { name = "buffer" },
         }),
         formatting = {
           format = function(entry, item)

@@ -4,6 +4,32 @@
 -- use `vim.keymap.set` instead
 local map = LazyVim.safe_keymap_set
 
+-- easier save, new and exit
+map("n", "<leader><leader>", ":wa<CR>", { desc = "Save files" })
+map("n", "<leader>qw", ":wqa<CR>", { desc = "Save files and Quit" })
+map("n", "<leader>Q", ":qa<CR>", { desc = "Quit all" })
+map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "Quit all" })
+map("n", "<leader>!", ":qa!<CR>", { desc = "forcefully Quit" })
+map("n", "<leader>n", ":new<CR>", { desc = "new buffer" })
+-- quit
+
+-- spell checker
+map("n", "<leader>zz", "1z=", { desc = "Fix to first spell suggestion" })
+
+-- Cursors Movement
+map({ "n", "v" }, "H", "^", { desc = "Jump to beginning of line" })
+map({ "n", "v" }, "L", "g_", { desc = "Jump to end of line" })
+
+-- Window Managemant
+map("n", "<leader>wo", ":only<CR>", { desc = "Display only current buffer" })
+map("n", "<leader>wh", ":hide<CR>", { desc = "Hide current buffer" })
+map("n", "<leader>wD", ":window diffthis<CR>", { desc = "Diff this window" })
+map("n", "<leader>wt", ":window diffoff<CR>", { desc = "Diff off" })
+
+-- Copy to clipboard
+map({ "n", "v" }, "<leader>y", '"+y', { desc = "Copy to clipboard" })
+map({ "n", "v" }, "<leader>Y", '"+yg_', { desc = "Copy to clipboard until EOL" })
+
 -- better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
 map({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
@@ -31,10 +57,12 @@ map("v", "<A-j>", ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc 
 map("v", "<A-k>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = "Move Up" })
 
 -- buffers
-map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
-map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
-map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
-map("n", "]b", "<cmd>bnext<cr>", { desc = "Next Buffer" })
+map("n", "<S-TAB>", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
+map("n", "<TAB>", "<cmd>bnext<cr>", { desc = "Next buffer" })
+map("n", "[[", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
+map("n", "]]", "<cmd>bnext<cr>", { desc = "Next buffer" })
+map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
+map("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
 map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 map("n", "<leader>bd", LazyVim.ui.bufremove, { desc = "Delete Buffer" })
@@ -104,7 +132,7 @@ local diagnostic_goto = function(next, severity)
     go({ severity = severity })
   end
 end
-map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+map("n", "<leader>cl", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
 map("n", "]d", diagnostic_goto(true), { desc = "Next Diagnostic" })
 map("n", "[d", diagnostic_goto(false), { desc = "Prev Diagnostic" })
 map("n", "]e", diagnostic_goto(true, "ERROR"), { desc = "Next Error" })
@@ -135,7 +163,7 @@ map("n", "<leader>gG", function() LazyVim.lazygit() end, { desc = "Lazygit (cwd)
 map("n", "<leader>gb", LazyVim.lazygit.blame_line, { desc = "Git Blame Line" })
 map("n", "<leader>gB", LazyVim.lazygit.browse, { desc = "Git Browse" })
 
-map("n", "<leader>gf", function()
+map("n", "<leader>gF", function()
   local git_path = vim.api.nvim_buf_get_name(0)
   LazyVim.lazygit({args = { "-f", vim.trim(git_path) }, cwd = LazyVim.root.git()})
 end, { desc = "Lazygit Current File History" })
@@ -154,13 +182,10 @@ map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "Quit All" })
 map("n", "<leader>ui", vim.show_pos, { desc = "Inspect Pos" })
 map("n", "<leader>uI", "<cmd>InspectTree<cr>", { desc = "Inspect Tree" })
 
--- LazyVim Changelog
-map("n", "<leader>L", function() LazyVim.news.changelog() end, { desc = "LazyVim Changelog" })
-
 -- floating terminal
 local lazyterm = function() LazyVim.terminal(nil, { cwd = LazyVim.root() }) end
-map("n", "<leader>ft", lazyterm, { desc = "Terminal (Root Dir)" })
-map("n", "<leader>fT", function() LazyVim.terminal() end, { desc = "Terminal (cwd)" })
+-- map("n", "<leader>ft", lazyterm, { desc = "Terminal (Root Dir)" })
+-- map("n", "<leader>fT", function() LazyVim.terminal() end, { desc = "Terminal (cwd)" })
 map("n", "<c-/>", lazyterm, { desc = "Terminal (Root Dir)" })
 map("n", "<c-_>", lazyterm, { desc = "which_key_ignore" })
 
@@ -188,3 +213,6 @@ map("n", "<leader><tab><tab>", "<cmd>tabnew<cr>", { desc = "New Tab" })
 map("n", "<leader><tab>]", "<cmd>tabnext<cr>", { desc = "Next Tab" })
 map("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "Close Tab" })
 map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
+
+
+map("n", "<leader>xm", "<cmd>messages<cr>", { desc = "Messages" })

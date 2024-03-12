@@ -86,6 +86,7 @@ return {
             desc = "Open with System Application",
           },
           ["P"] = { "toggle_preview", config = { use_float = false } },
+          ["o"] = "system_open",
         },
       },
       default_component_configs = {
@@ -101,6 +102,14 @@ return {
             staged = "󰱒",
           },
         },
+      },
+      commands = {
+        system_open = function(state)
+          local node = state.tree:get_node()
+          local path = node:get_id()
+          path = vim.fn.shellescape(path, 1)
+          vim.api.nvim_command("silent !xdg-open " .. path)
+        end,
       },
     },
     config = function(_, opts)
@@ -133,7 +142,7 @@ return {
     cmd = "GrugFar",
     keys = {
       {
-        "<leader>sr",
+        "<leader>sR",
         function()
           local grug = require("grug-far")
           local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")

@@ -23,6 +23,8 @@ return {
       on_open = function(win)
         vim.api.nvim_win_set_config(win, { zindex = 100 })
       end,
+      animate = false,
+      stages = "static",
     },
     init = function()
       -- when noice is not enabled, install notify on VeryLazy
@@ -40,15 +42,19 @@ return {
     "akinsho/bufferline.nvim",
     event = "VeryLazy",
     keys = {
-      { "<leader>bp", "<Cmd>BufferLineTogglePin<CR>", desc = "Toggle Pin" },
-      { "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete Non-Pinned Buffers" },
-      { "<leader>bo", "<Cmd>BufferLineCloseOthers<CR>", desc = "Delete Other Buffers" },
-      { "<leader>br", "<Cmd>BufferLineCloseRight<CR>", desc = "Delete Buffers to the Right" },
-      { "<leader>bl", "<Cmd>BufferLineCloseLeft<CR>", desc = "Delete Buffers to the Left" },
-      { "<S-h>", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
-      { "<S-l>", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
+      { "<leader>bp", "<Cmd>BufferLineTogglePin<CR>", desc = "Toggle pin" },
+      { "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete non-pinned buffers" },
+      { "<leader>bo", "<Cmd>BufferLineCloseOthers<CR>", desc = "Delete other buffers" },
+      { "<leader>br", "<Cmd>BufferLineCloseRight<CR>", desc = "Delete buffers to the right" },
+      { "<leader>bl", "<Cmd>BufferLineCloseLeft<CR>", desc = "Delete buffers to the left" },
+      -- { "<S-h>", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev buffer" },
+      -- { "<S-l>", "<cmd>BufferLineCycleNext<cr>", desc = "Next buffer" },
+      { "[[", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev buffer" },
+      { "]]", "<cmd>BufferLineCycleNext<cr>", desc = "Next buffer" },
       { "[b", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
       { "]b", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
+      { "<S-TAB>", "<cmd>BufferLineCyclePrev<cr>", desc = "Move buffer prev" },
+      { "<TAB>", "<cmd>BufferLineCycleNext<cr>", desc = "Move buffer next" },
       { "[B", "<cmd>BufferLineMovePrev<cr>", desc = "Move buffer prev" },
       { "]B", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer next" },
     },
@@ -237,16 +243,16 @@ return {
       })
 
       return {
-        indent = {
-          char = "│",
-          tab_char = "│",
-        },
+        -- temp disabled
+        -- indent = {
+        --   char = "│",
+        --   tab_char = "│",
+        -- },
         scope = { show_start = false, show_end = false },
         exclude = {
           filetypes = {
             "help",
             "alpha",
-            "dashboard",
             "neo-tree",
             "Trouble",
             "trouble",
@@ -297,11 +303,11 @@ return {
     keys = {
       { "<leader>sn", "", desc = "+noice"},
       { "<S-Enter>", function() require("noice").redirect(vim.fn.getcmdline()) end, mode = "c", desc = "Redirect Cmdline" },
-      { "<leader>snl", function() require("noice").cmd("last") end, desc = "Noice Last Message" },
-      { "<leader>snh", function() require("noice").cmd("history") end, desc = "Noice History" },
-      { "<leader>sna", function() require("noice").cmd("all") end, desc = "Noice All" },
-      { "<leader>snd", function() require("noice").cmd("dismiss") end, desc = "Dismiss All" },
-      { "<leader>snt", function() require("noice").cmd("pick") end, desc = "Noice Picker (Telescope/FzfLua)" },
+      { "<leader>xnl", function() require("noice").cmd("last") end, desc = "Noice Last Message" },
+      { "<leader>xnh", function() require("noice").cmd("history") end, desc = "Noice History" },
+      { "<leader>xna", function() require("noice").cmd("all") end, desc = "Noice All" },
+      { "<leader>xnd", function() require("noice").cmd("dismiss") end, desc = "Dismiss All" },
+      { "<leader>xnt", function() require("noice").cmd("pick") end, desc = "Noice Picker (Telescope/FzfLua)" },
       { "<c-f>", function() if not require("noice.lsp").scroll(4) then return "<c-f>" end end, silent = true, expr = true, desc = "Scroll Forward", mode = {"i", "n", "s"} },
       { "<c-b>", function() if not require("noice.lsp").scroll(-4) then return "<c-b>" end end, silent = true, expr = true, desc = "Scroll Backward", mode = {"i", "n", "s"}},
     },

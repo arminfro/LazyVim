@@ -81,7 +81,7 @@ return {
     end,
     keys = {
       {
-        "<leader>cp",
+        "<leader>rp",
         ft = "markdown",
         "<cmd>MarkdownPreviewToggle<cr>",
         desc = "Markdown Preview",
