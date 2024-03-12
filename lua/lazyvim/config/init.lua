@@ -10,9 +10,7 @@ LazyVim.config = M
 local defaults = {
   -- colorscheme can be a string like `catppuccin` or a function that will load the colorscheme
   ---@type string|fun()
-  colorscheme = function()
-    require("tokyonight").load()
-  end,
+  colorscheme = "kanagawa",
   -- load the default settings
   defaults = {
     autocmds = true, -- lazyvim.config.autocmds
@@ -25,7 +23,7 @@ local defaults = {
     -- This only contains big new features and breaking changes.
     lazyvim = true,
     -- Same but for Neovim's news.txt
-    neovim = false,
+    neovim = true,
   },
   -- icons used by other plugins
   -- stylua: ignore
