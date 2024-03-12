@@ -12,5 +12,9 @@ require("lazyvim.config").init()
 
 return {
   { "folke/lazy.nvim", version = "*" },
-  { "LazyVim/LazyVim", priority = 10000, lazy = false, opts = {}, cond = true, version = "*" },
+  -- <<<<<<< HEAD
+  --   { "LazyVim/LazyVim", priority = 10000, lazy = false, opts = {}, cond = true, version = "*" },
+  -- =======
+  { "arminfro/LazyVim", priority = 10000, lazy = false, config = true, cond = true, version = "*" },
+  -- >>>>>>> 499c0fc (initial adoption to own needs)
 }

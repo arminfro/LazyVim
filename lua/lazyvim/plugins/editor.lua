@@ -87,6 +87,7 @@ return {
             desc = "Open with System Application",
           },
           ["P"] = { "toggle_preview", config = { use_float = false } },
+          ["o"] = "system_open",
         },
       },
       default_component_configs = {
@@ -102,6 +103,14 @@ return {
             staged = "󰱒",
           },
         },
+      },
+      commands = {
+        system_open = function(state)
+          local node = state.tree:get_node()
+          local path = node:get_id()
+          path = vim.fn.shellescape(path, 1)
+          vim.api.nvim_command("silent !xdg-open " .. path)
+        end,
       },
     },
     config = function(_, opts)
@@ -135,13 +144,10 @@ return {
     opts = { open_cmd = "noswapfile vnew" },
     -- stylua: ignore
     keys = {
-      { "<leader>sr", function() require("spectre").open() end, desc = "Replace in Files (Spectre)" },
+      { "<leader>sR", function() require("spectre").open() end, desc = "Replace in files (Spectre)" },
     },
   },
 
-  -- Flash enhances the built-in search functionality by showing labels
-  -- at the end of each match, letting you quickly jump to a specific
-  -- location.
   {
     "folke/flash.nvim",
     event = "VeryLazy",
@@ -230,6 +236,74 @@ return {
         map("n", "<leader>ghD", function() gs.diffthis("~") end, "Diff This ~")
         map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
       end,
+    },
+  },
+
+  -- Automatically highlights other instances of the word under your cursor.
+  -- This works with LSP, Treesitter, and regexp matching to find the other
+  -- instances.
+  {
+    "RRethy/vim-illuminate",
+    event = "LazyFile",
+    opts = {
+      delay = 200,
+      large_file_cutoff = 2000,
+      large_file_overrides = {
+        providers = { "lsp" },
+      },
+    },
+    config = function(_, opts)
+      require("illuminate").configure(opts)
+
+      local function map(key, dir, buffer)
+        vim.keymap.set("n", key, function()
+          require("illuminate")["goto_" .. dir .. "_reference"](false)
+        end, { desc = dir:sub(1, 1):upper() .. dir:sub(2) .. " Reference", buffer = buffer })
+      end
+
+      map("]r", "next")
+      map("[r", "prev")
+
+      -- also set it after loading ftplugins, since a lot overwrite [[ and ]]
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function()
+          local buffer = vim.api.nvim_get_current_buf()
+          map("]r", "next", buffer)
+          map("[r", "prev", buffer)
+        end,
+      })
+    end,
+    keys = {
+      { "]r", desc = "Next Reference" },
+      { "[r", desc = "Prev Reference" },
+    },
+  },
+
+  -- buffer remove
+  {
+    "echasnovski/mini.bufremove",
+
+    keys = {
+      {
+        "<leader>bd",
+        function()
+          local bd = require("mini.bufremove").delete
+          if vim.bo.modified then
+            local choice = vim.fn.confirm(("Save changes to %q?"):format(vim.fn.bufname()), "&Yes\n&No\n&Cancel")
+            if choice == 1 then -- Yes
+              vim.cmd.write()
+              bd(0)
+            elseif choice == 2 then -- No
+              bd(0, true)
+            end
+          else
+            bd(0)
+          end
+        end,
+        desc = "Delete Buffer",
+      },
+      -- stylua: ignore
+      { "<leader>bD", function() require("mini.bufremove").delete(0, true) end, desc = "Delete Buffer (Force)" },
     },
   },
 

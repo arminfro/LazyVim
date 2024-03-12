@@ -14,20 +14,57 @@ function M.get()
     -- stylua: ignore
     M._keys =  {
       { "<leader>cl", "<cmd>LspInfo<cr>", desc = "Lsp Info" },
-      { "gd", vim.lsp.buf.definition(), desc = "Goto Definition", has = "definition" },
-      { "gr", vim.lsp.buf.references(), desc = "References", nowait = true },
-      { "gI", vim.lsp.buf.implementation(), desc = "Goto Implementation" },
-      { "gy", vim.lsp.buf.type_definition(), desc = "Goto T[y]pe Definition" },
+-- <<<<<<< HEAD
+--       { "gd", vim.lsp.buf.definition(), desc = "Goto Definition", has = "definition" },
+--       { "gr", vim.lsp.buf.references(), desc = "References", nowait = true },
+--       { "gI", vim.lsp.buf.implementation(), desc = "Goto Implementation" },
+--       { "gy", vim.lsp.buf.type_definition(), desc = "Goto T[y]pe Definition" },
+--       { "gD", vim.lsp.buf.declaration, desc = "Goto Declaration" },
+-- =======
       { "gD", vim.lsp.buf.declaration, desc = "Goto Declaration" },
+      -- { "gI", function() require("telescope.builtin").lsp_implementations({ reuse_win = true }) end, desc = "Goto Implementation" }, -- is set by dnlhc/glance.nvim
+      -- { "gt", function() require("telescope.builtin").lsp_type_definitions({ reuse_win = true }) end, desc = "Goto T[y]pe Definition" }, -- is set by dnlhc/glance.nvim
+      -- { "gr", "<cmd>Telescope lsp_references<cr>", desc = "References", nowait = true },
+      -- { "R", "<cmd>Telescope lsp_references<cr>", desc = "LSP references" }, -- is set by dnlhc/glance.nvim
+-- >>>>>>> 499c0fc (initial adoption to own needs)
       { "K", vim.lsp.buf.hover, desc = "Hover" },
       { "gK", vim.lsp.buf.signature_help, desc = "Signature Help", has = "signatureHelp" },
       { "<c-k>", vim.lsp.buf.signature_help, mode = "i", desc = "Signature Help", has = "signatureHelp" },
-      { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "v" }, has = "codeAction" },
+      -- { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "v" }, has = "codeAction" }, -- is set by "aznhe21/actions-preview.nvim"
       { "<leader>cc", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "v" }, has = "codeLens" },
       { "<leader>cC", vim.lsp.codelens.refresh, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
       { "<leader>cR", LazyVim.lsp.rename_file, desc = "Rename File", mode ={"n"}, has = { "workspace/didRenameFiles", "workspace/willRenameFiles" } },
-      { "<leader>cr", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
-      { "<leader>cA", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
+-- <<<<<<< HEAD
+--       { "<leader>cr", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
+--       { "<leader>cA", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
+-- =======
+      {
+        "<leader>h",
+        vim.lsp.buf.hover,
+        desc = "Hover",
+      },
+      {
+        "<leader>ch",
+        vim.lsp.buf.signature_help,
+        desc = "Signature help",
+        mode = { "n" }, has = "signatureHelp",
+      },
+      {
+        "<leader>cA",
+        function()
+          vim.lsp.buf.code_action({
+            context = {
+              only = {
+                "source",
+              },
+              diagnostics = {},
+            },
+          })
+        end,
+        desc = "Source Action",
+        has = "codeAction",
+      },
+-- >>>>>>> 499c0fc (initial adoption to own needs)
       { "]]", function() LazyVim.lsp.words.jump(vim.v.count1) end, has = "documentHighlight",
         desc = "Next Reference", cond = function() return LazyVim.lsp.words.enabled end },
       { "[[", function() LazyVim.lsp.words.jump(-vim.v.count1) end, has = "documentHighlight",
